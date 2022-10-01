@@ -9,23 +9,18 @@ from .models import Question, Choice
 # Create your views here.
 
 def index(request):
-    questions = Question.objects.all()
-    '''latest_question_list = Question.objects.order_by('-pub_date')[:5] #Ultimas 5 preguntas ordenadas fechas
-    output = ', '.join([q.question_text for q in latest_question_list])
-    return HttpResponse(output)'''
-
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
     template = loader.get_template('polls/index.html')
     context = {
-        'mensaje': "Lista de encuestas",
-        'latest_question_list': latest_question_list,
+        'mensaje': 'Lista de preguntas',
+        'ultimas_preguntas': latest_question_list,
     }
-    return HttpResponse(template.render(context, request))
+    return render(request, 'polls/index.html', context)
 
 '''def hola_dos(request):
     return HttpResponse("hola2")'''
 
-def detail(request, question_id):
+'''def detail(request, question_id):
     try:
         question = Question.objects.get(pk=question_id)
     except Question.DoesNotExist:
@@ -38,14 +33,23 @@ def detail(request, question_id):
         'question': question
     }
     return render(request, 'polls/detail.html', context)
-
+'''
 '''def results(request, question_id):
     response = "You're looking at the results of question %s."
     return HttpResponse(response % question_id)'''
+'''def results(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/results.html', {'question': question})
+'''
+
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/detail.html', {'mensaje': 'Detalle de la pregunta','question': question})
+
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/results.html', {'question': question})
-    
+
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
